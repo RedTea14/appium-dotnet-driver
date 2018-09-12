@@ -15,6 +15,7 @@
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
+using OpenQA.Selenium.Appium.Extensions;
 
 namespace OpenQA.Selenium.Appium.Service.Options
 {

@@ -164,11 +164,24 @@ namespace OpenQA.Selenium.Appium
 
         #region Public Methods
 
-        protected override Response Execute(string driverCommandToExecute, Dictionary<string, object> parameters) =>
-            base.Execute(driverCommandToExecute, parameters);
+        protected override Response Execute(string driverCommandToExecute, Dictionary<string, object> parameters)
+        {
+            // once the "capabilities" is attached in parameters, the appium driver will return the data without "status" field (such as status:0)
+            // remove "capabilities" so that the appium will return the json data with "status" field.
+            // if the returned json data has no "status" field, the web driver will be treated as Specification Compliant
+            // and all the methods of WebElement will go to the if branch (actually it should go to the else branch)
+            // see RemoteWebElement.Displayed for example.
+            string key = "capabilities";
+            if (parameters != null && parameters.ContainsKey(key))
+            {
+                parameters.Remove(key);
+            }
+
+            return base.Execute(driverCommandToExecute, parameters);
+        }
 
         Response IExecuteMethod.Execute(string commandName, Dictionary<string, object> parameters) =>
-            base.Execute(commandName, parameters);
+            this.Execute(commandName, parameters);
 
         Response IExecuteMethod.Execute(string driverCommand) => Execute(driverCommand, null);
 
